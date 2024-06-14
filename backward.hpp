@@ -3822,7 +3822,14 @@ private:
 
   static std::vector<std::string> get_paths_from_env_variable_impl() {
     std::vector<std::string> paths;
+
+#ifndef WIN32
     const char *prefixes_str = std::getenv("BACKWARD_CXX_SOURCE_PREFIXES");
+#else
+    char* prefixes_str;
+    size_t length;
+    auto err_code = _dupenv_s(&prefixes_str, &length, "BACKWARD_CXX_SOURCE_PREFIXES");
+#endif
     if (prefixes_str && prefixes_str[0]) {
       paths = details::split_source_prefixes(prefixes_str);
     }
